@@ -1,0 +1,26 @@
+@startuml architecture
+rectangle "The plant" as plant {
+    rectangle "SCADA" as asutp
+    rectangle "Maintenance personnel" as user
+    rectangle MRMS {
+        rectangle "Web-app" as web_app
+        rectangle "Backend" as backend_app
+        rectangle "Databases" as db {
+            database "Media-data database" as db_media
+            database "Regulatory, accounting\nand reference information database" as db_mrms
+            database "Historical databases" as db_history
+            db_mrms -[hidden]- db_history
+            db_media -[hidden]- db_mrms
+        } 
+        web_app <-right-> backend_app
+        backend_app <-up-> db_media
+        backend_app <-left-> db_mrms
+        backend_app <-down-> db_history
+    }
+    user -> web_app
+    asutp -[hidden]- user 
+    asutp -> backend_app : OPC UA
+}
+
+
+@enduml

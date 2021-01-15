@@ -1,0 +1,26 @@
+@startuml architecture
+rectangle "Предприятие" as plant {
+    rectangle "АСУ ТП" as asutp
+    rectangle "Пользователь" as user
+    rectangle MRMS {
+        rectangle "Web-приложение" as web_app
+        rectangle "Серверное приложение" as backend_app
+        rectangle "Базы данных" as db {
+            database "База медиа-данных" as db_media
+            database "База нормативной,\nучётной и справочной информации" as db_mrms
+            database "База ретроспективной информации" as db_history
+            db_mrms -[hidden]- db_history
+            db_media -[hidden]- db_mrms
+        } 
+        web_app <-right-> backend_app
+        backend_app <-up-> db_media
+        backend_app <-left-> db_mrms
+        backend_app <-down-> db_history
+    }
+    user -> web_app
+    asutp -[hidden]- user 
+    asutp -> backend_app : OPC UA
+}
+
+
+@enduml

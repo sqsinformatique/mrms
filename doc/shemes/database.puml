@@ -1,0 +1,180 @@
+@startuml database
+
+!define Table(name,desc) class name as "desc" << (T,#FFAAAA) >>
+' we use bold for primary key
+' green color for unique
+' and underscore for not_null
+!define primary_key(x) #<b>x</b>
+!define unique(x) <color:green>x</color>
+!define not_null(x) <u>x</u>
+' other tags available:
+' <i></i>
+' <back:COLOR></color>, where color is a color name or html color code
+' (#FFAACC)
+' see: http://plantuml.com/classes.html#More
+hide methods
+hide stereotypes
+
+rectangle "База нормативной, учётной и справочной информации" as db_mrms {
+  Table(user, "user\n(Пользователь платформы)") {
+    primary_key(user_id) int
+    unique(user_email) character[255]
+    unique(user_phone) character[255]
+    user_hash character[255]
+    user_role character[255]
+    meta jsonb 
+    created_at timestamp
+    updated_at timestamp
+    deleted_at timestamp
+  }
+
+  Table(user_profile, "user_profiles\n(Профиль пользователя)") {
+    primary_key(user_id) int
+    user_first_name character[255]
+    user_middle_name character[255]
+    user_last_name character[255]
+    user_position character[255]
+    user_private_key character[2048]
+    user_public_key character[2048]
+    meta jsonb
+    created_at time
+    update_at time
+    deleted_at time
+  }
+
+  note right of user_profile::user_position
+      Должность
+  end note
+
+  note right of user_profile::user_private_key
+      Приватный ключ электронной подписи
+  end note
+
+  note right of user_profile::user_public_key
+      Публичный ключ электронной подписи
+  end note
+
+  Table(equipment, "equipment\n(Справочник оборудования)") {
+    primary_key(equipment_id) int
+    params jsonb
+    code string
+    description string
+    meta jsonb
+    created_at timestamp
+    updated_at timestamp
+    deleted_at timestamp
+  }
+
+  note right of equipment::params
+      Доступные параметры
+  end note
+
+  note right of equipment::code
+      Шифр оборудования
+  end note
+
+  note right of equipment::description
+      Описание оборудования
+  end note
+
+  Table(repair_task_scenario, "repair_task_scenario\n(Сценарии заданий на ремонт)") {
+    primary_key(scenario_id) int
+    equipment_id int
+    controlled_params jsonb
+    fixed_params jsonb
+    default_personal int
+    checklist_id int
+    meta jsonb
+    created_at timestamp
+    updated_at timestamp
+    deleted_at timestamp
+  }
+
+  note right of repair_task_scenario::controlled_params
+      Контролируемые параметры
+  end note
+
+  note right of repair_task_scenario::fixed_params
+      Фиксируемые при аварии параметры
+  end note
+
+  Table(repair_task, "repair_task\n(Задания на ремонт)") {
+    primary_key(repair_task_id) int
+    fixed_params jsonb
+    default_personal int
+    checklist_id int
+    meta jsonb
+    created_at timestamp
+    updated_at timestamp
+    deleted_at timestamp
+  }
+
+  note right of repair_task::fixed_params
+      Зафиксированные при аварии параметры
+  end note
+
+  Table(checklist_drafts, "checklist_drafts\n(Шаблон чеклиста)") {
+    primary_key(checklist_drafts_id) int
+    jobs jsonb
+    meta jsonb
+    created_at timestamp
+    updated_at timestamp
+    deleted_at timestamp
+  }
+
+  Table(checklists, "checklists\n(Заполненные чеклисты)") {
+    primary_key(checklist_id) int
+    jobs jsonb
+    meta jsonb
+    created_at timestamp
+    updated_at timestamp
+    deleted_at timestamp
+  }
+
+  user::user_id -- user_profile::user_id : "A user only \nhas one profile"
+  user::user_id -- repair_task_scenario::default_personal
+  equipment::equipment_id -- repair_task_scenario::equipment_id
+  user::user_id -- repair_task::default_personal
+  checklist_drafts::checklist_drafts_id -- repair_task_scenario::checklist_id
+}
+
+rectangle "База медиаданных" as db_media {
+  Table(images, "images\n(Фото)") {
+    images_id uuid
+    timestamp time
+    checklist_id int
+    binary_data
+  }
+
+  Table(videos, "videos\n(Видео)") {
+    videos_id uuid
+    timestamp time
+    checklist_id int
+    binary_data
+  } 
+}
+
+images::checklist_id -- repair_task::checklist_id
+videos::checklist_id -- repair_task::checklist_id
+
+rectangle "База ретроспективной информации" as db_history {
+  Table(equipment_params, "equipment_params\n(Параметры оборудования)") {
+    primary_key(equipment_params_id) int
+    equipment_id int
+    params jsonb
+    timestamp time
+  }
+
+  Table(checklist_history, "checklist_history\n(История заполнения чеклистов)") {
+    primary_key(checklist_history_id) int
+    checklist_id int
+    params jsonb
+    jobs jsonb
+    timestamp time
+  }
+}
+
+equipment::equipment_id -- equipment_params::equipment_id
+repair_task::checklist_id -- checklist_history::checklist_id
+
+@enduml

@@ -1,0 +1,51 @@
+@startuml user-scenarios
+actor "User" as user
+
+box MRMS
+participant "Authorization system" as auth
+participant "Main screen" as main_screen
+participant "Repair-task" as order
+participant "Checklist" as check_list
+end box
+
+group The engineer takes repair-task in work
+user -> auth : user authorization
+auth -> main_screen : open the list of repair-tasks\nappointed to user 
+main_screen -> order : open repair-task
+order -> order : change task state to "In progress"
+order -> check_list : open checklist
+check_list -> check_list : filling,\nappend media-files
+check_list -> check_list : change checklist state to "Filled"
+check_list -> order : change task state to "Completed"
+order -> main_screen : return to main screen
+end group
+
+group Create repair-task by manually
+user -> auth : user authorization with role Senior engineer
+auth -> main_screen : open list of created repair-tasks,\nacces to flow of creating repair-task,\naccess to filled checklists
+main_screen -> order : create repair-task
+order -> order : set the equepment for task
+order -> check_list : create checklist
+check_list -> order : return to repair-task
+order -> order : set task staff
+order -> order : change task state to "To work"
+order -> main_screen : return to main screen
+end group
+
+group Set task staff
+user -> auth : user authorization with role Senior engineer
+auth -> main_screen : open list of created repair-tasks,\nacces to flow of creating repair-task,\naccess to filled checklists
+main_screen -> order : select repair-task,\nopen repair-task content
+order -> order : set task staff
+order -> order : change task state to "To work"
+order -> main_screen : return to main screen
+end group
+
+group Checklist review
+user -> auth : user authorization with role Senior engineer/Chief Engineer
+auth -> main_screen : open list of created repair-tasks,\nacces to flow of creating repair-task,\naccess to filled checklists
+main_screen -> check_list : select checklist,\nopen repair-task content
+check_list -> main_screen : return to main screen
+end group
+
+@enduml

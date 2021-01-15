@@ -1,0 +1,11 @@
+@startuml common-flow
+
+"SCADA" as asutp -> MRMS : passing information\nabout out of bounds
+MRMS -> MRMS : generation repair-task
+"Senior engineer" as senior -> MRMS : set task staff
+"Engineer" as engineer -> MRMS : take the task to work
+"Engineer" as engineer -> MRMS : filling the checklists
+MRMS -> MRMS : save checklists
+"Chief Engineer" as superviser -> MRMS : review the filled checklists
+
+@enduml
