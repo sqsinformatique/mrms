@@ -1,0 +1,15 @@
+[submodule "mrms-fe"]
+	path = mrms-fe
+	url = git@github.com:sqsinformatique/mrms-fe.git
+[submodule "mrms-auth"]
+	path = mrms-auth
+	url = git@github.com:sqsinformatique/mrms-auth.git
+[submodule "mrms-profile"]
+	path = mrms-profile
+	url = git@github.com:sqsinformatique/mrms-profile.git
+[submodule "mrms-data-collector"]
+	path = mrms-data-collector
+	url = git@github.com:sqsinformatique/mrms-data-collector.git
+[submodule "mrms-task-manager"]
+	path = mrms-task-manager
+	url = git@github.com:sqsinformatique/mrms-task-manager.git
