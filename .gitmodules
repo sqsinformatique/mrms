@@ -10,3 +10,6 @@
 [submodule "mrms-task-manager"]
 	path = mrms-task-manager
 	url = git@github.com:sqsinformatique/mrms-task-manager.git
+[submodule "mrms-data-collector"]
+	path = mrms-data-collector
+	url = git@github.com:sqsinformatique/mrms-data-collector.git
